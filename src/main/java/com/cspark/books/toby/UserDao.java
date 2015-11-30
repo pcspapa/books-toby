@@ -5,7 +5,7 @@ import java.sql.*;
 /**
  * Created by cspark on 2015. 11. 25..
  */
-public class UserDao {
+public abstract class UserDao {
 
     public void add(User user) throws ClassNotFoundException, SQLException {
         Connection conn = getConnection();
@@ -41,30 +41,6 @@ public class UserDao {
         return user;
     }
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new UserDao();
-
-        User user = new User();
-        user.setId      ("cspark");
-        user.setName    ("cs 박"  );
-        user.setPassword("1111"  );
-
-        dao.add(user);
-
-        System.out.println("등록 성공");
-
-        User user2 = dao.get(user.getId());
-        System.out.println(user2.getName    ());
-        System.out.println(user2.getPassword());
-
-        System.out.println(user2.getId() + " 조회 성공");
-    }
-
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:h2:tcp://localhost//projects/h2data/books/toby", "sa", "");
-
-        return conn;
-    }
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 
 }
