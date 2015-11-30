@@ -5,10 +5,16 @@ import java.sql.*;
 /**
  * Created by cspark on 2015. 11. 25..
  */
-public abstract class UserDao {
+public class UserDao {
+
+    private SimpleConnectionMaker simpleConnectionMaker;
+
+    public UserDao() {
+        simpleConnectionMaker = new SimpleConnectionMaker();
+    }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection conn = getConnection();
+        Connection conn = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
         ps.setString(1, user.getId      ());
@@ -22,7 +28,7 @@ public abstract class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection conn = getConnection();
+        Connection conn = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
         ps.setString(1, id);
@@ -41,6 +47,23 @@ public abstract class UserDao {
         return user;
     }
 
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        UserDao dao = new UserDao();
+
+        User user = new User();
+        user.setId      ("cspark");
+        user.setName    ("cs 박"  );
+        user.setPassword("1111"  );
+
+        dao.add(user);
+
+        System.out.println("등록 성공");
+
+        User user2 = dao.get(user.getId());
+        System.out.println(user2.getName    ());
+        System.out.println(user2.getPassword());
+
+        System.out.println(user2.getId() + " 조회 성공");
+    }
 
 }
