@@ -6,7 +6,14 @@
 
     <bean id="connectionMaker" class="com.cspark.books.toby.DConnectionMaker"/>
 
+    <bean id="dataSources" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:tcp://localhost//projects/h2data/books/toby"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
     <bean id="userDao" class="com.cspark.books.toby.UserDao">
-        <property name="connectionMaker" ref="connectionMaker"/>
+        <property name="dataSource" ref="dataSources"/>
     </bean>
 </beans>
