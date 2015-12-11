@@ -9,7 +9,6 @@ import java.sql.SQLException;
  */
 public class DConnectionMaker implements ConnectionMaker {
 
-    @Override
     public Connection makeNewConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.h2.Driver");
         Connection conn = DriverManager.getConnection("jdbc:h2:tcp://localhost//projects/h2data/books/toby", "sa", "");
