@@ -1,9 +1,11 @@
 package com.cspark.books.toby.dao;
 
 import com.cspark.books.toby.domain.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -29,14 +31,7 @@ public class UserDao {
     }
 
     public void add(final User user) throws SQLException {
-        jdbcContext.workWithStatementStrategy(conn -> {
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-
-            return ps;
-        });
+        jdbcTemplate.update("INSERT INTO users(id, name, password) VALUES (?, ?, ?)", user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(String id) throws SQLException {
@@ -86,44 +81,22 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcTemplate.update(connection -> connection.prepareStatement("DELETE FROM users"));
+        jdbcTemplate.update("DELETE FROM users");
     }
 
     public int getCount() throws SQLException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = dataSource.getConnection();
-            ps = conn.prepareStatement("SELECT COUNT(*) FROM users");
-
-            rs = ps.executeQuery();
-            rs.next();
-
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
+        return jdbcTemplate.query(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                return connection.prepareStatement("SELECT COUNT(*) FROM users");
             }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
+        }, new ResultSetExtractor<Integer>() {
+            @Override
+            public Integer extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+                resultSet.next();
+                return resultSet.getInt(1);
             }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        });
     }
 
 }
