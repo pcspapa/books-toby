@@ -11,14 +11,20 @@ import java.sql.*;
  */
 public class UserDao {
 
+    private JdbcContext jdbcContext;
+
     private DataSource dataSource;
+
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
+    }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     public void add(final User user) throws SQLException {
-        jdbcContextWithStatementStrategy(conn -> {
+        jdbcContext.workWithStatementStrategy(conn -> {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
@@ -75,7 +81,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(conn -> conn.prepareStatement("DELETE FROM users"));
+        jdbcContext.workWithStatementStrategy(conn -> conn.prepareStatement("DELETE FROM users"));
     }
 
     public int getCount() throws SQLException {
@@ -100,34 +106,6 @@ public class UserDao {
                 } catch (SQLException e) {
                 }
             }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = dataSource.getConnection();
-
-            ps = stmt.makePreparedStatement(conn);
-
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
             if (ps != null) {
                 try {
                     ps.close();

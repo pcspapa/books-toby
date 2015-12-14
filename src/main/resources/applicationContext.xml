@@ -13,7 +13,12 @@
         <property name="password" value=""/>
     </bean>
 
+    <bean id="jdbcContext" class="com.cspark.books.toby.dao.JdbcContext">
+        <property name="dataSource" ref="dataSources"/>
+    </bean>
+
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDao">
         <property name="dataSource" ref="dataSources"/>
+        <property name="jdbcContext" ref="jdbcContext"/>
     </bean>
 </beans>
