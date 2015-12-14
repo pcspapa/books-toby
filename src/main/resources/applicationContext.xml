@@ -19,6 +19,5 @@
 
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDao">
         <property name="dataSource" ref="dataSources"/>
-        <property name="jdbcContext" ref="jdbcContext"/>
     </bean>
 </beans>
