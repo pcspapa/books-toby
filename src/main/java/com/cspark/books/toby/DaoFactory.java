@@ -1,6 +1,5 @@
 package com.cspark.books.toby;
 
-import com.sun.xml.internal.ws.api.server.SDDocumentSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;

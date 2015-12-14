@@ -1,5 +1,7 @@
 package com.cspark.books.toby;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import javax.sql.DataSource;
 import java.sql.*;
 
@@ -14,7 +16,7 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
-    public void add(User user) throws ClassNotFoundException, SQLException {
+    public void add(User user) throws SQLException {
         Connection conn = dataSource.getConnection();
 
         PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
@@ -28,24 +30,55 @@ public class UserDao {
         conn.close();
     }
 
-    public User get(String id) throws ClassNotFoundException, SQLException {
+    public User get(String id) throws SQLException {
         Connection conn = dataSource.getConnection();
 
         PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
         ps.setString(1, id);
 
         ResultSet rs = ps.executeQuery();
-        rs.next();
-        User user = new User();
-        user.setId      (rs.getString("id"      ));
-        user.setName    (rs.getString("name"    ));
-        user.setPassword(rs.getString("password"));
+        User user = null;
+        if (rs.next()) {
+            user = new User();
+            user.setId(rs.getString("id"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
+        }
 
         rs.close();
         ps.close();
         conn.close();
 
+        if (user ==  null) throw new EmptyResultDataAccessException(1);
+
         return user;
+    }
+
+    public void deleteAll() throws SQLException {
+        Connection conn = dataSource.getConnection();
+
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM users");
+
+        ps.executeUpdate();
+
+        ps.close();
+        conn.close();
+    }
+
+    public int getCount() throws SQLException {
+        Connection conn = dataSource.getConnection();
+
+        PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM users");
+
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+
+        rs.close();
+        ps.close();
+        conn.close();
+
+        return count;
     }
 
 }
