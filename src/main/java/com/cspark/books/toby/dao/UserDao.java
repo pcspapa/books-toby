@@ -2,6 +2,8 @@ package com.cspark.books.toby.dao;
 
 import com.cspark.books.toby.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -10,6 +12,8 @@ import java.sql.*;
  * Created by cspark on 2015. 11. 25..
  */
 public class UserDao {
+
+    private JdbcTemplate jdbcTemplate;
 
     private JdbcContext jdbcContext;
 
@@ -21,6 +25,7 @@ public class UserDao {
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     public void add(final User user) throws SQLException {
@@ -81,7 +86,12 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.executeSql("DELETE FROM users");
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                return connection.prepareStatement("DELETE FROM users");
+            }
+        });
     }
 
     public int getCount() throws SQLException {
