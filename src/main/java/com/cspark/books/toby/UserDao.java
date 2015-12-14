@@ -56,6 +56,7 @@ public class UserDao {
             conn = dataSource.getConnection();
             ps = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
             ps.setString(1, id);
+
             rs = ps.executeQuery();
             if (rs.next()) {
                 user = new User();
@@ -98,7 +99,6 @@ public class UserDao {
         try {
             conn = dataSource.getConnection();
             ps = conn.prepareStatement("DELETE FROM users");
-
             ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
@@ -125,7 +125,6 @@ public class UserDao {
 
         try {
             conn = dataSource.getConnection();
-
             ps = conn.prepareStatement("SELECT COUNT(*) FROM users");
 
             rs = ps.executeQuery();
