@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.List;
 
 /**
  * Created by cspark on 2015. 11. 25..
@@ -18,10 +19,7 @@ public class UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private DataSource dataSource;
-
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
@@ -30,13 +28,7 @@ public class UserDao {
     }
 
     public User get(String id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new Object[] {id}, (resultSet, i) -> {
-            User user = new User();
-            user.setId(resultSet.getString("id"));
-            user.setName(resultSet.getString("name"));
-            user.setPassword(resultSet.getString("password"));
-            return user;
-        });
+        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new Object[] {id}, userRowMapper());
     }
 
     public void deleteAll() {
@@ -47,4 +39,17 @@ public class UserDao {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
     }
 
+    public List<User> getAll() {
+        return jdbcTemplate.query("SELECT * FROM users ORDER BY id", userRowMapper());
+    }
+
+    public RowMapper<User> userRowMapper() {
+        return (resultSet, i) -> {
+            User user = new User();
+            user.setId(resultSet.getString("id"));
+            user.setName(resultSet.getString("name"));
+            user.setPassword(resultSet.getString("password"));
+            return user;
+        };
+    }
 }

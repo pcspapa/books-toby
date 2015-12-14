@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -79,4 +80,21 @@ public class UserDaoTest {
         dao.get("unknown_id");
     }
 
+
+    @Test
+    public void getAll() throws Exception {
+        dao.deleteAll();
+
+        dao.add(user1);
+        List<User> users1 = dao.getAll();
+        assertThat(users1.size(), is(1));
+
+        dao.add(user2);
+        List<User> users2 = dao.getAll();
+        assertThat(users2.size(), is(2));
+
+        dao.add(user3);
+        List<User> users3 = dao.getAll();
+        assertThat(users3.size(), is(3));
+    }
 }
