@@ -1,4 +1,4 @@
-package com.cspark.books.toby;
+package com.cspark.books.toby.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * Created by cspark on 2015. 11. 30..
  */
-public class DConnectionMaker implements ConnectionMaker {
+public class NConnectionMaker implements ConnectionMaker {
 
     public Connection makeNewConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.h2.Driver");

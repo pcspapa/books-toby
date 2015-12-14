@@ -1,4 +1,4 @@
-package com.cspark.books.toby;
+package com.cspark.books.toby.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;

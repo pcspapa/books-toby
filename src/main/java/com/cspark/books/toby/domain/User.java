@@ -1,4 +1,4 @@
-package com.cspark.books.toby;
+package com.cspark.books.toby.domain;
 
 /**
  * Created by cspark on 2015. 11. 25..

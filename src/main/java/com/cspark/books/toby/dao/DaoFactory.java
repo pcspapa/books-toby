@@ -1,4 +1,4 @@
-package com.cspark.books.toby;
+package com.cspark.books.toby.dao;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,5 +1,6 @@
-package com.cspark.books.toby;
+package com.cspark.books.toby.dao;
 
+import com.cspark.books.toby.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.sql.DataSource;
@@ -93,29 +94,8 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = dataSource.getConnection();
-            ps = conn.prepareStatement("DELETE FROM users");
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        StatementStrategy stmt = new DeleteStatementStrategy();
+        jdbcContextWithStatementStrategy(stmt);
     }
 
     public int getCount() throws SQLException {
@@ -140,6 +120,34 @@ public class UserDao {
                 } catch (SQLException e) {
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = dataSource.getConnection();
+
+            ps = stmt.makePreparedStatement(conn);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
             if (ps != null) {
                 try {
                     ps.close();

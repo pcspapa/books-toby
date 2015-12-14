@@ -1,11 +1,13 @@
 package com.cspark.books.toby;
 
+import com.cspark.books.toby.dao.DeleteStatementStrategy;
+import com.cspark.books.toby.dao.StatementStrategy;
+import com.cspark.books.toby.dao.UserDao;
+import com.cspark.books.toby.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -76,4 +78,5 @@ public class UserDaoTest {
 
         dao.get("unknown_id");
     }
+
 }

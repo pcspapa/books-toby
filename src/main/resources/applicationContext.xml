@@ -4,7 +4,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="connectionMaker" class="com.cspark.books.toby.DConnectionMaker"/>
+    <bean id="connectionMaker" class="com.cspark.books.toby.dao.DConnectionMaker"/>
 
     <bean id="dataSources" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
@@ -13,7 +13,7 @@
         <property name="password" value=""/>
     </bean>
 
-    <bean id="userDao" class="com.cspark.books.toby.UserDao">
+    <bean id="userDao" class="com.cspark.books.toby.dao.UserDao">
         <property name="dataSource" ref="dataSources"/>
     </bean>
 </beans>
