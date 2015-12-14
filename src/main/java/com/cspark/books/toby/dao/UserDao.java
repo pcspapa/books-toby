@@ -43,7 +43,7 @@ public class UserDao {
         return jdbcTemplate.query("SELECT * FROM users ORDER BY id", userRowMapper());
     }
 
-    public RowMapper<User> userRowMapper() {
+    private RowMapper<User> userRowMapper() {
         return (resultSet, i) -> {
             User user = new User();
             user.setId(resultSet.getString("id"));
