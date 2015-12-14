@@ -18,33 +18,8 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = dataSource.getConnection();
-
-            ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-            ps.execute();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-
+        StatementStrategy stmt = new AddStatementStrategy(user);
+        jdbcContextWithStatementStrategy(stmt);
     }
 
     public User get(String id) throws SQLException {
