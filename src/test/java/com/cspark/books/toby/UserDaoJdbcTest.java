@@ -1,13 +1,12 @@
 package com.cspark.books.toby;
 
-import com.cspark.books.toby.dao.DeleteStatementStrategy;
-import com.cspark.books.toby.dao.StatementStrategy;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,10 +22,10 @@ import static org.junit.Assert.assertThat;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext.xml")
-public class UserDaoTest {
+public class UserDaoJdbcTest {
 
     @Autowired
-    private UserDao dao;
+    private UserDao userDao;
 
     private User user1;
     private User user2;
@@ -40,61 +39,70 @@ public class UserDaoTest {
     }
 
     @Test
-    public void count() throws SQLException {
-        dao.deleteAll();
-        assertThat(dao.getCount(), is(0));
+    public void count() {
+        userDao.deleteAll();
+        assertThat(userDao.getCount(), is(0));
 
-        dao.add(user1);
-        assertThat(dao.getCount(), is(1));
+        userDao.add(user1);
+        assertThat(userDao.getCount(), is(1));
 
-        dao.add(user2);
-        assertThat(dao.getCount(), is(2));
+        userDao.add(user2);
+        assertThat(userDao.getCount(), is(2));
 
-        dao.add(user3);
-        assertThat(dao.getCount(), is(3));
+        userDao.add(user3);
+        assertThat(userDao.getCount(), is(3));
     }
 
     @Test
-    public void addAndGet() throws SQLException {
-        dao.deleteAll();
-        assertThat(dao.getCount(), is(0));
+    public void addAndGet() {
+        userDao.deleteAll();
+        assertThat(userDao.getCount(), is(0));
 
-        dao.add(user1);
-        dao.add(user2);
-        assertThat(dao.getCount(), is(2));
+        userDao.add(user1);
+        userDao.add(user2);
+        assertThat(userDao.getCount(), is(2));
 
-        User getUser1 = dao.get(user1.getId());
+        User getUser1 = userDao.get(user1.getId());
         assertThat(getUser1.getName(), is(user1.getName()));
         assertThat(getUser1.getPassword(), is(user1.getPassword()));
 
-        User getUser2 = dao.get(user2.getId());
+        User getUser2 = userDao.get(user2.getId());
         assertThat(getUser2.getName(), is(user2.getName()));
         assertThat(getUser2.getPassword(), is(user2.getPassword()));
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
-    public void getUserFailure() throws Exception {
-        dao.deleteAll();
-        assertThat(dao.getCount(), is(0));
+    @Test
+    public void testduplicateKey() throws Exception {
+        userDao.deleteAll();
 
-        dao.get("unknown_id");
+        userDao.add(user1);
+        userDao.add(user1);
+
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void getUserFailure() {
+        userDao.deleteAll();
+        assertThat(userDao.getCount(), is(0));
+
+        userDao.get("unknown_id");
     }
 
 
-    @Test
-    public void getAll() throws Exception {
-        dao.deleteAll();
+    @Test(expected = DuplicateKeyException.class)
+    public void getAll() {
+        userDao.deleteAll();
 
-        dao.add(user1);
-        List<User> users1 = dao.getAll();
+        userDao.add(user1);
+        List<User> users1 = userDao.getAll();
         assertThat(users1.size(), is(1));
 
-        dao.add(user2);
-        List<User> users2 = dao.getAll();
+        userDao.add(user2);
+        List<User> users2 = userDao.getAll();
         assertThat(users2.size(), is(2));
 
-        dao.add(user3);
-        List<User> users3 = dao.getAll();
+        userDao.add(user3);
+        List<User> users3 = userDao.getAll();
         assertThat(users3.size(), is(3));
     }
 }

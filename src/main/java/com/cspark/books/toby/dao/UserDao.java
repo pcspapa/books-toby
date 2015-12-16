@@ -1,55 +1,20 @@
 package com.cspark.books.toby.dao;
 
 import com.cspark.books.toby.domain.User;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 
-import javax.sql.DataSource;
-import java.sql.*;
 import java.util.List;
 
 /**
- * Created by cspark on 2015. 11. 25..
+ * Created by cspark on 2015. 12. 16..
  */
-public class UserDao {
+public interface UserDao {
+    void add(User user);
 
-    private JdbcTemplate jdbcTemplate;
+    User get(String id);
 
-    public void setDataSource(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
+    void deleteAll();
 
-    public void add(final User user) {
-        jdbcTemplate.update("INSERT INTO users(id, name, password) VALUES (?, ?, ?)", user.getId(), user.getName(), user.getPassword());
-    }
+    int getCount();
 
-    public User get(String id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new Object[] {id}, userRowMapper());
-    }
-
-    public void deleteAll() {
-        jdbcTemplate.update("DELETE FROM users");
-    }
-
-    public int getCount() {
-        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
-    }
-
-    public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY id", userRowMapper());
-    }
-
-    private RowMapper<User> userRowMapper() {
-        return (resultSet, i) -> {
-            User user = new User();
-            user.setId(resultSet.getString("id"));
-            user.setName(resultSet.getString("name"));
-            user.setPassword(resultSet.getString("password"));
-            return user;
-        };
-    }
+    List<User> getAll();
 }

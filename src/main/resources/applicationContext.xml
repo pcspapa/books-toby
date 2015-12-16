@@ -17,7 +17,7 @@
         <property name="dataSource" ref="dataSources"/>
     </bean>
 
-    <bean id="userDao" class="com.cspark.books.toby.dao.UserDao">
+    <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSources"/>
     </bean>
 </beans>
