@@ -1,5 +1,6 @@
 package com.cspark.books.toby.dao;
 
+import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,12 +26,13 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void add(final User user) {
-        jdbcTemplate.update("INSERT INTO users(id, name, password) VALUES (?, ?, ?)", user.getId(), user.getName(), user.getPassword());
+        jdbcTemplate.update("INSERT INTO users(id, name, password, level, login, recommend) VALUES (?, ?, ?, ?, ?, ?)"
+                , user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());
     }
 
     @Override
     public User get(String id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new Object[] {id}, userRowMapper());
+        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new Object[]{id}, userRowMapper());
     }
 
     @Override
@@ -48,12 +50,21 @@ public class UserDaoJdbc implements UserDao {
         return jdbcTemplate.query("SELECT * FROM users ORDER BY id", userRowMapper());
     }
 
+    @Override
+    public void update(User user) {
+        jdbcTemplate.update("UPDATE users SET name=?, password=?, level=?, login=?, recommend=? WHERE id=?"
+                , user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getId());
+    }
+
     private RowMapper<User> userRowMapper() {
         return (resultSet, i) -> {
             User user = new User();
             user.setId(resultSet.getString("id"));
             user.setName(resultSet.getString("name"));
             user.setPassword(resultSet.getString("password"));
+            user.setLevel(Level.valueOf(resultSet.getInt("level")));
+            user.setLogin(resultSet.getInt("login"));
+            user.setRecommend(resultSet.getInt("recommend"));
             return user;
         };
     }
