@@ -45,15 +45,28 @@ public class UserServiceTest {
     @Test
     public void upgradeLevels() throws Exception {
         userDao.deleteAll();
+
         for (User user : users)
             userDao.add(user);
 
         userService.upgradeLevels();
+
         checkLevel(users.get(0), Level.BASIC);
         checkLevel(users.get(1), Level.SILVER);
         checkLevel(users.get(2), Level.SILVER);
         checkLevel(users.get(3), Level.GOLD);
         checkLevel(users.get(4), Level.GOLD);
+    }
+
+    @Test
+    public void add() throws Exception {
+        userDao.deleteAll();
+
+        users.get(0).setLevel(null);
+        userService.add(users.get(0));
+
+        assertThat(users.get(0).getLevel(), is(Level.BASIC));
+
     }
 
     private void checkLevel(User user, Level expectedLevel) {
