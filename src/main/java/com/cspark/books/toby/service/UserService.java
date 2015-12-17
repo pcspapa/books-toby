@@ -26,7 +26,7 @@ public class UserService {
 
     }
 
-    private void upgradeLevel(User user) {
+    protected void upgradeLevel(User user) {
         user.upgradeLevel();
         userDao.update(user);
     }
@@ -38,6 +38,8 @@ public class UserService {
                 return user.getLogin() >= 50;
             case SILVER:
                 return user.getRecommend() >= 30;
+            case GOLD:
+                return false;
             default:
                 throw new IllegalArgumentException("Unknown Level:" + currentLevel);
         }

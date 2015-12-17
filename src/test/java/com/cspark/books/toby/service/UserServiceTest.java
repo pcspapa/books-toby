@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Created by cspark on 2015. 12. 16..
@@ -51,11 +52,11 @@ public class UserServiceTest {
 
         userService.upgradeLevels();
 
-        checkLevel(users.get(0), Level.BASIC);
-        checkLevel(users.get(1), Level.SILVER);
-        checkLevel(users.get(2), Level.SILVER);
-        checkLevel(users.get(3), Level.GOLD);
-        checkLevel(users.get(4), Level.GOLD);
+        checkLevel(users.get(0), false);
+        checkLevel(users.get(1), true);
+        checkLevel(users.get(2), false);
+        checkLevel(users.get(3), true);
+        checkLevel(users.get(4), false);
     }
 
     @Test
@@ -69,7 +70,51 @@ public class UserServiceTest {
 
     }
 
-    private void checkLevel(User user, Level expectedLevel) {
-        assertThat(userDao.get(user.getId()).getLevel(), is(expectedLevel));
+    @Test
+    public void upgradeAllOrNothing() throws Exception {
+        UserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
+        userDao.deleteAll();
+
+        for (User user : users)
+            userDao.add(user);
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected.");
+        } catch (Exception e) {
+        }
+
+        checkLevel(users.get(1), false);
+
+    }
+
+    private void checkLevel(User user, boolean upgraded) {
+        User userUpdate = userDao.get(user.getId());
+        if(upgraded) {
+            assertThat(userUpdate.getLevel(), is(user.getLevel().nextLevel()));
+        }
+        else {
+            assertThat(userUpdate.getLevel(), is(user.getLevel()));
+        }
+    }
+
+    static class TestUserService extends UserService {
+        private String id;
+
+        private TestUserService(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected void upgradeLevel(User user) {
+            if(user.getId().equals(id))
+                throw new TestUserServiceException();
+
+            super.upgradeLevel(user);
+        }
+
+        private class TestUserServiceException extends RuntimeException {
+        }
     }
 }
