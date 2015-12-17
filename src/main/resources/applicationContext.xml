@@ -19,6 +19,7 @@
 
     <bean id="userService" class="com.cspark.books.toby.service.UserService">
         <property name="userDao" ref="userDao"/>
+        <property name="dataSource" ref="dataSources"/>
     </bean>
 
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">

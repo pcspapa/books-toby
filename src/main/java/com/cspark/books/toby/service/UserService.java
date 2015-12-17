@@ -3,7 +3,12 @@ package com.cspark.books.toby.service;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -13,15 +18,35 @@ public class UserService {
 
     UserDao userDao;
 
+    DataSource dataSource;
+
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 
-    public void upgradeLevels() {
-        List<User> users = userDao.getAll();
-        for (User user : users) {
-            if (canUpgradeLevel(user))
-                upgradeLevel(user);
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public void upgradeLevels() throws SQLException {
+        TransactionSynchronizationManager.initSynchronization();
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        conn.setAutoCommit(false);
+
+        try {
+            List<User> users = userDao.getAll();
+            for (User user : users) {
+                if (canUpgradeLevel(user))
+                    upgradeLevel(user);
+            }
+            conn.commit();
+        } catch (Exception e) {
+            conn.rollback();
+            throw  e;
+        } finally {
+            DataSourceUtils.releaseConnection(conn, dataSource);
+            TransactionSynchronizationManager.unbindResource(this.dataSource);
+            TransactionSynchronizationManager.clearSynchronization();
         }
 
     }
