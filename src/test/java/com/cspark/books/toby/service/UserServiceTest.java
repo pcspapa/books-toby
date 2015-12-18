@@ -1,5 +1,6 @@
 package com.cspark.books.toby.service;
 
+import com.cspark.books.toby.dao.TransactionHandler;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,6 +85,36 @@ public class UserServiceTest {
         UserServiceTx txUserService = new UserServiceTx();
         txUserService.setTransactionManager(transactionManager);
         txUserService.setUserService(testUserService);
+
+        userDao.deleteAll();
+
+        for (User user : users)
+            userDao.add(user);
+
+        try {
+            txUserService.upgradeLevels();
+            fail("TestUserServiceException expected.");
+        } catch (Exception e) {
+        }
+
+        checkLevel(users.get(1), false);
+    }
+
+
+    @Test
+    public void upgradeAllOrNothingWithDynamicProxy() throws Exception {
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
+
+        TransactionHandler txHandler = new TransactionHandler();
+        txHandler.setTarget(testUserService);
+        txHandler.setTransactionManager(transactionManager);
+        txHandler.setPattern("upgradeLevels");
+
+        UserService txUserService = (UserService) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class[] {UserService.class},
+                txHandler);
 
         userDao.deleteAll();
 
