@@ -8,15 +8,18 @@ import java.lang.reflect.Method;
  */
 public class UppercaseHandler implements InvocationHandler {
 
-    Hello target;
+    Object target;
 
-    public UppercaseHandler(Hello tarket) {
+    public UppercaseHandler(Object tarket) {
         this.target = tarket;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        String ret = (String) method.invoke(target, args);
-        return ret.toUpperCase();
+        Object ret = method.invoke(target, args);
+        if (ret instanceof String)
+            return ((String) ret).toUpperCase();
+        else
+            return ret;
     }
 }
