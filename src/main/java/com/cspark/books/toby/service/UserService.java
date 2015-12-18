@@ -3,14 +3,10 @@ package com.cspark.books.toby.service;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -32,21 +28,31 @@ public class UserService {
     }
 
     public void upgradeLevels() throws SQLException {
-        TransactionStatus status
-                = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        TransactionStatus status = transactionManager
+                .getTransaction(new DefaultTransactionDefinition());
 
         try {
-            List<User> users = userDao.getAll();
-            for (User user : users) {
-                if (canUpgradeLevel(user))
-                    upgradeLevel(user);
-            }
+            upgradeLevesIsInternal();
             transactionManager.commit(status);
         } catch (Exception e) {
             transactionManager.rollback(status);
             throw  e;
         }
 
+    }
+
+    private void upgradeLevesIsInternal() {
+        List<User> users = userDao.getAll();
+        for (User user : users) {
+            if (canUpgradeLevel(user))
+                upgradeLevel(user);
+        }
+    }
+
+    public void add(User user) {
+        if (user.getLevel() == null)
+            user.setLevel(Level.BASIC);
+        userDao.add(user);
     }
 
     protected void upgradeLevel(User user) {
@@ -66,11 +72,5 @@ public class UserService {
             default:
                 throw new IllegalArgumentException("Unknown Level:" + currentLevel);
         }
-    }
-
-    public void add(User user) {
-        if (user.getLevel() == null)
-            user.setLevel(Level.BASIC);
-        userDao.add(user);
     }
 }
