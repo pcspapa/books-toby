@@ -17,9 +17,13 @@
         <property name="dataSource" ref="dataSources"/>
     </bean>
 
-    <bean id="userService" class="com.cspark.books.toby.service.UserService">
-        <property name="userDao" ref="userDao"/>
+    <bean id="userService" class="com.cspark.books.toby.service.UserServiceTx">
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService" ref="userServiceImpl"/>
+    </bean>
+
+    <bean id="userServiceImpl" class="com.cspark.books.toby.service.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
     </bean>
 
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
