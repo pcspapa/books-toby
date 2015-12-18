@@ -1,4 +1,4 @@
-package com.cspark.books.toby;
+package com.cspark.books.toby.learningtest.junit;
 
 import org.junit.Test;
 
