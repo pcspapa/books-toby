@@ -39,7 +39,6 @@
             <list>
                 <value>transactionAdvisor</value>
             </list>
-
         </property>
     </bean>
 
