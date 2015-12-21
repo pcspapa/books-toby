@@ -23,12 +23,27 @@
         <property name="userService" ref="userServiceImpl"/>
     </bean>
     -->
+
+    <!--
     <bean id="userService" class="com.cspark.books.toby.service.TxProxyFactoryBean">
         <property name="target" ref="userServiceImpl"/>
         <property name="transactionManager" ref="transactionManager"/>
         <property name="pattern" value="upgradeLevels"/>
         <property name="serviceInterface" value="com.cspark.books.toby.service.UserService"/>
     </bean>
+    -->
+
+    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target" ref="userServiceImpl"/>
+        <property name="interceptorNames">
+            <list>
+                <value>transactionAdvisor</value>
+            </list>
+
+        </property>
+    </bean>
+
+
 
     <bean id="userServiceImpl" class="com.cspark.books.toby.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
@@ -40,5 +55,18 @@
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSources"/>
+    </bean>
+
+    <bean id="transactionAdvice" class="com.cspark.books.toby.service.TransactionAdvice">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+        <property name="mappedName" value="upgrade*"/>
+    </bean>
+
+    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="transactionAdvice"/>
+        <property name="pointcut" ref="transactionPointcut"/>
     </bean>
 </beans>
