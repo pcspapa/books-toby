@@ -35,9 +35,15 @@
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
+    <!--
     <aop:config>
         <aop:pointcut id="transactionPointcut" expression="execution(* *..*ServiceImpl.upgrade*(..))"/>
         <aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut"/>
+    </aop:config>
+    -->
+
+    <aop:config>
+        <aop:advisor advice-ref="transactionAdvice" pointcut="execution(* *..*ServiceImpl.upgrade*(..))"/>
     </aop:config>
 
 </beans>
