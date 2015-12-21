@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.Is.isA;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -35,6 +37,9 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserService testUserService;
 
     @Autowired
     PlatformTransactionManager transactionManager;
@@ -85,12 +90,12 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(userDao);
+        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
+        testUserServiceImpl.setUserDao(userDao);
 
         UserServiceTx txUserService = new UserServiceTx();
         txUserService.setTransactionManager(transactionManager);
-        txUserService.setUserService(testUserService);
+        txUserService.setUserService(testUserServiceImpl);
 
         userDao.deleteAll();
 
@@ -109,11 +114,11 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothingWithDynamicProxy() throws Exception {
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(userDao);
+        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
+        testUserServiceImpl.setUserDao(userDao);
 
         TransactionHandler txHandler = new TransactionHandler();
-        txHandler.setTarget(testUserService);
+        txHandler.setTarget(testUserServiceImpl);
         txHandler.setTransactionManager(transactionManager);
         txHandler.setPattern("upgradeLevels");
 
@@ -140,11 +145,11 @@ public class UserServiceTest {
     @DirtiesContext
     @Ignore
     public void upgradeAllOrNothingWithFactoryBean() throws Exception {
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(userDao);
+        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
+        testUserServiceImpl.setUserDao(userDao);
 
         TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
+        txProxyFactoryBean.setTarget(testUserServiceImpl);
 
         UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
@@ -164,12 +169,13 @@ public class UserServiceTest {
 
     @Test
     @DirtiesContext
+    @Ignore
     public void upgradeAllOrNothingWithProxyFactoryBean() throws Exception {
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(userDao);
+        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
+        testUserServiceImpl.setUserDao(userDao);
 
         ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
+        txProxyFactoryBean.setTarget(testUserServiceImpl);
 
         UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
@@ -187,6 +193,28 @@ public class UserServiceTest {
         checkLevel(users.get(1), false);
     }
 
+    @Test
+    public void upgradeAllOrNothingWithAutoProxy() throws Exception {
+        userDao.deleteAll();
+
+        for (User user : users)
+            userDao.add(user);
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected.");
+        } catch (Exception e) {
+        }
+
+        checkLevel(users.get(1), false);
+    }
+
+    @Test
+    public void advisorAutoProxyCreator() throws Exception {
+        assertThat(testUserService, is(instanceOf(Proxy.class)));
+
+    }
+
     private void checkLevel(User user, boolean upgraded) {
         User userUpdate = userDao.get(user.getId());
         if(upgraded) {
@@ -197,10 +225,14 @@ public class UserServiceTest {
         }
     }
 
-    static class TestUserService extends UserServiceImpl {
+    static class TestUserServiceImpl extends UserServiceImpl {
         private String id;
 
-        private TestUserService(String id) {
+        public TestUserServiceImpl() {
+            this.id = "id4";
+        }
+
+        private TestUserServiceImpl(String id) {
             this.id = id;
         }
 
