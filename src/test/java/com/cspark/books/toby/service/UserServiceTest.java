@@ -29,7 +29,7 @@ import static org.junit.Assert.fail;
  * Created by cspark on 2015. 12. 16..
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/aop-applicationContext.xml")
+@ContextConfiguration(locations = "/tx-applicationContext.xml")
 public class UserServiceTest {
 
     @Autowired
