@@ -99,10 +99,6 @@ public class DynamicProxyTest {
             assertThat(proxiedHello.sayHi("Chan"), is("Hi Chan"));
             assertThat(proxiedHello.sayThankYou("Chan"), is("Thank you Chan"));
         }
-
-
-
-
     }
 
     static class UppercaseAdvice implements MethodInterceptor {
