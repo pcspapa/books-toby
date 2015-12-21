@@ -1,6 +1,5 @@
 package com.cspark.books.toby.service;
 
-import com.cspark.books.toby.dao.TransactionHandler;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
