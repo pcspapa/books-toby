@@ -1,5 +1,8 @@
-package com.cspark.books.toby.learningtest.jdk;
+package com.cspark.books.toby.learningtest.jdk.proxy;
 
+import com.cspark.books.toby.learningtest.jdk.Hello;
+import com.cspark.books.toby.learningtest.jdk.HelloTarket;
+import com.cspark.books.toby.learningtest.jdk.UppercaseHandler;
 import org.junit.Test;
 
 import java.lang.reflect.Proxy;
