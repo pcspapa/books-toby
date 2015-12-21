@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -34,6 +36,9 @@ public class UserServiceTest {
 
     @Autowired
     PlatformTransactionManager transactionManager;
+
+    @Autowired
+    ApplicationContext context;
 
     private List<User> users;
 
@@ -114,6 +119,31 @@ public class UserServiceTest {
                 getClass().getClassLoader(),
                 new Class[] {UserService.class},
                 txHandler);
+
+        userDao.deleteAll();
+
+        for (User user : users)
+            userDao.add(user);
+
+        try {
+            txUserService.upgradeLevels();
+            fail("TestUserServiceException expected.");
+        } catch (Exception e) {
+        }
+
+        checkLevel(users.get(1), false);
+    }
+
+    @Test
+    @DirtiesContext
+    public void upgradeAllOrNothingWithFactoryBean() throws Exception {
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
+
+        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testUserService);
+
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         userDao.deleteAll();
 

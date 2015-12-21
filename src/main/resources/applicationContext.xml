@@ -17,9 +17,17 @@
         <property name="dataSource" ref="dataSources"/>
     </bean>
 
+    <!--
     <bean id="userService" class="com.cspark.books.toby.service.UserServiceTx">
         <property name="transactionManager" ref="transactionManager"/>
         <property name="userService" ref="userServiceImpl"/>
+    </bean>
+    -->
+    <bean id="userService" class="com.cspark.books.toby.service.TxProxyFactoryBean">
+        <property name="target" ref="userServiceImpl"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="pattern" value="upgradeLevels"/>
+        <property name="serviceInterface" value="com.cspark.books.toby.service.UserService"/>
     </bean>
 
     <bean id="userServiceImpl" class="com.cspark.books.toby.service.UserServiceImpl">
