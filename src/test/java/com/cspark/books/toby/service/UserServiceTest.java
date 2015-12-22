@@ -15,6 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -249,6 +250,7 @@ public class UserServiceTest {
             super.upgradeLevel(user);
         }
 
+        @Transactional(readOnly = true)
         @Override
         public List<User> getAll() {
             super.getAll().forEach(super::update);
