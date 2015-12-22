@@ -194,6 +194,12 @@ public class UserServiceTest {
     }
 
     @Test
+    @Ignore
+    public void advisorAutoProxyCreator() throws Exception {
+        assertThat(testUserService, is(instanceOf(Proxy.class)));
+    }
+
+    @Test
     public void upgradeAllOrNothingWithAutoProxy() throws Exception {
         userDao.deleteAll();
 
@@ -210,9 +216,8 @@ public class UserServiceTest {
     }
 
     @Test
-    @Ignore
-    public void advisorAutoProxyCreator() throws Exception {
-        assertThat(testUserService, is(instanceOf(Proxy.class)));
+    public void readOnlyTransactionAttribute() throws Exception {
+        testUserService.getAll();
     }
 
     private void checkLevel(User user, boolean upgraded) {
@@ -242,6 +247,12 @@ public class UserServiceTest {
                 throw new TestUserServiceException();
 
             super.upgradeLevel(user);
+        }
+
+        @Override
+        public List<User> getAll() {
+            super.getAll().forEach(super::update);
+            return null;
         }
 
         private class TestUserServiceException extends RuntimeException {
