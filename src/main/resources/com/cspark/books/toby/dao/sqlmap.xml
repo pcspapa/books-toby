@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sqlmap xmlns="http://www.cspark.com/sqlmap"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLoaction="http://www.cspark.com/sqlmap ../sqlservice/jaxb/sqlmap.xsd">
+    <sql key="userAdd">INSERT INTO users(id, name, password, level, login, recommend) VALUES (?, ?, ?, ?, ?, ?)</sql>
+    <sql key="userGet">SELECT * FROM users WHERE id = ?</sql>
+</sqlmap>
