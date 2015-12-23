@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 public class JaxbTest {
 
     @Test
-    public void reqdSqlmap() throws Exception {
+    public void readSqlmap() throws Exception {
         String contextPath = Sqlmap.class.getPackage().getName();
         JAXBContext context = JAXBContext.newInstance(contextPath);
         Unmarshaller unmarshaller = context.createUnmarshaller();
