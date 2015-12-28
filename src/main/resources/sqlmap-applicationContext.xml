@@ -24,11 +24,16 @@
     <bean id="testUserService" class="com.cspark.books.toby.service.UserServiceTest$TestUserServiceImpl"
           parent="userService"/>
 
-    <bean id="sqlService" class="com.cspark.books.toby.sqlservice.XmlSqlService">
-        <property name="sqlReader" ref="sqlService"/>
-        <property name="sqlRegistry" ref="sqlService"/>
+    <bean id="sqlService" class="com.cspark.books.toby.sqlservice.BaseSqlService">
+        <property name="sqlReader" ref="sqlReader"/>
+        <property name="sqlRegistry" ref="sqlRegistry"/>
+    </bean>
+
+    <bean id="sqlReader" class="com.cspark.books.toby.sqlservice.JaxbXmlSqlReader">
         <property name="sqlmapFile" value="sqlmap.xml"/>
     </bean>
+
+    <bean id="sqlRegistry" class="com.cspark.books.toby.sqlservice.HashMapSqlRegistry"/>
 
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSources"/>
