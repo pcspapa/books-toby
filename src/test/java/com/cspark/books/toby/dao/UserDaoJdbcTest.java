@@ -1,4 +1,4 @@
-package com.cspark.books.toby;
+package com.cspark.books.toby.dao;
 
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;

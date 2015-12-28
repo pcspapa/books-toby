@@ -2,6 +2,7 @@ package com.cspark.books.toby.dao;
 
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
+import com.cspark.books.toby.sqlservice.SqlService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,39 +21,45 @@ public class UserDaoJdbc implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    private SqlService sqlService;
+
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
+    }
+
     @Override
     public void add(final User user) {
-        jdbcTemplate.update("INSERT INTO users(id, name, password, level, login, recommend) VALUES (?, ?, ?, ?, ?, ?)"
+        jdbcTemplate.update(sqlService.getSql("userAdd")
                 , user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());
     }
 
     @Override
     public User get(String id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new Object[]{id}, userRowMapper());
+        return jdbcTemplate.queryForObject(sqlService.getSql("userGet"), new Object[]{id}, userRowMapper());
     }
 
     @Override
     public void deleteAll() {
-        jdbcTemplate.update("DELETE FROM users");
+        jdbcTemplate.update(sqlService.getSql("userDeleteAll"));
     }
 
     @Override
     public int getCount() {
-        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
+        return jdbcTemplate.queryForObject(sqlService.getSql("userGetCount"), Integer.class);
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY id", userRowMapper());
+        return jdbcTemplate.query(sqlService.getSql("userGetAll"), userRowMapper());
     }
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update("UPDATE users SET name=?, password=?, level=?, login=?, recommend=? WHERE id=?"
+        jdbcTemplate.update(sqlService.getSql("userUpdate")
                 , user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getId());
     }
 

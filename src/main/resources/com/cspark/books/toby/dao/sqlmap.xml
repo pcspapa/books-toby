@@ -3,6 +3,12 @@
 <sqlmap xmlns="http://www.cspark.com/sqlmap"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLoaction="http://www.cspark.com/sqlmap ../sqlservice/jaxb/sqlmap.xsd">
+
     <sql key="userAdd">INSERT INTO users(id, name, password, level, login, recommend) VALUES (?, ?, ?, ?, ?, ?)</sql>
     <sql key="userGet">SELECT * FROM users WHERE id = ?</sql>
+    <sql key="userGetAll">SELECT * FROM users</sql>
+    <sql key="userDeleteAll">DELETE FROM users</sql>
+    <sql key="userGetCount">SELETE COUNT(*) FROM users</sql>
+    <sql key="userUpdate">UPDATE users SET name=?, password=?, level=?, login=?, recommend=? WHERE id=?</sql>
+
 </sqlmap>
