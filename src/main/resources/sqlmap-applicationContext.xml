@@ -25,6 +25,8 @@
           parent="userService"/>
 
     <bean id="sqlService" class="com.cspark.books.toby.sqlservice.XmlSqlService">
+        <property name="sqlReader" ref="sqlService"/>
+        <property name="sqlRegistry" ref="sqlService"/>
         <property name="sqlmapFile" value="sqlmap.xml"/>
     </bean>
 

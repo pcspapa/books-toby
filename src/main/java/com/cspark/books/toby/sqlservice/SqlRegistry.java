@@ -7,6 +7,6 @@ public interface SqlRegistry {
 
     void registry(String key, String value);
 
-    String findSql(String key);
+    String findSql(String key) throws SqlNotFoundException;
 
 }

@@ -15,18 +15,58 @@ import java.util.Map;
 /**
  * Created by cspark on 2015. 12. 28..
  */
-public class XmlSqlService implements SqlService {
+public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
 
     private Map<String, String> sqlMap = new HashMap<>();
 
     private String sqlmapFile;
 
+    private SqlRegistry sqlRegistry;
+
+    private SqlReader sqlReader;
+
     public void setSqlmapFile(String sqlmapFile) {
         this.sqlmapFile = sqlmapFile;
     }
 
+    public void setSqlRegistry(SqlRegistry sqlRegistry) {
+        this.sqlRegistry = sqlRegistry;
+    }
+
+    public void setSqlReader(SqlReader sqlReader) {
+        this.sqlReader = sqlReader;
+    }
+
     @PostConstruct
     public void loadSql() {
+        sqlReader.read(sqlRegistry);
+    }
+
+    @Override
+    public String getSql(String key) throws SqlRetrievalFailureException {
+        try {
+            return sqlRegistry.findSql(key);
+        } catch (SqlNotFoundException e) {
+           throw new SqlRetrievalFailureException(e);
+        }
+    }
+
+    @Override
+    public void registry(String key, String value) {
+        sqlMap.put(key, value);
+    }
+
+    @Override
+    public String findSql(String key) throws SqlNotFoundException {
+        String sql = sqlMap.get(key);
+        if (sql == null)
+            throw new SqlNotFoundException(key + "를 이용해서 SQL을 찾을 수 없습니다");
+        else
+            return sql;
+    }
+
+    @Override
+    public void read(SqlRegistry sqlRegistry) {
         String contextPath = Sqlmap.class.getPackage().getName();
 
         try {
@@ -36,8 +76,7 @@ public class XmlSqlService implements SqlService {
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(is);
 
             for (SqlType sql : sqlmap.getSql()) {
-                sqlMap.put(sql.getKey(), sql.getValue());
-                System.out.println(sql.getKey() + ", " + sql.getValue());
+                sqlRegistry.registry(sql.getKey(), sql.getValue());
             }
 
         } catch (JAXBException e) {
@@ -45,12 +84,4 @@ public class XmlSqlService implements SqlService {
         }
     }
 
-    @Override
-    public String getSql(String key) throws SqlRetrievalFailureException {
-        String sql = sqlMap.get(key);
-        if (sql == null)
-            throw new SqlRetrievalFailureException(key + "를 이용해서 SQL을 찾을 수 없습니다");
-        else
-            return sql;
-    }
 }
