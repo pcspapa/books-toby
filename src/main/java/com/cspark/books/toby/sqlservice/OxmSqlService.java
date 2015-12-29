@@ -35,6 +35,10 @@ public class OxmSqlService implements SqlService {
         oxmSqlReader.setUnmarshaller(unmarshaller);
     }
 
+    public void setSqlRegistry(SqlRegistry sqlRegistry) {
+        this.sqlRegistry = sqlRegistry;
+    }
+
     public void setSqlmap(Resource sqlmap) {
         oxmSqlReader.setSqlmap(sqlmap);
     }
@@ -69,7 +73,7 @@ public class OxmSqlService implements SqlService {
                 Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(xmlSource);
 
                 for (SqlType sql : sqlmap.getSql()) {
-                    sqlRegistry.registry(sql.getKey(), sql.getValue());
+                    sqlRegistry.registerSql(sql.getKey(), sql.getValue());
                 }
             } catch (IOException e) {
                 new IllegalArgumentException(sqlmap.getFilename() + "을 가져올 수 없습나다.");

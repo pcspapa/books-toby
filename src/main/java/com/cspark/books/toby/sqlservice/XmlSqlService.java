@@ -52,7 +52,7 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
     }
 
     @Override
-    public void registry(String key, String value) {
+    public void registerSql(String key, String value) {
         sqlMap.put(key, value);
     }
 
@@ -76,7 +76,7 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(is);
 
             for (SqlType sql : sqlmap.getSql()) {
-                sqlRegistry.registry(sql.getKey(), sql.getValue());
+                sqlRegistry.registerSql(sql.getKey(), sql.getValue());
             }
 
         } catch (JAXBException e) {

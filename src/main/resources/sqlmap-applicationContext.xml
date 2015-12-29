@@ -44,11 +44,14 @@
     <bean id="sqlService" class="com.cspark.books.toby.sqlservice.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"/>
         <property name="sqlmap" value="classpath:com/cspark/books/toby/dao/sqlmap.xml"/>
+        <property name="sqlRegistry" ref="sqlRegistry"/>
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="com.cspark.books.toby.sqlservice.jaxb"/>
     </bean>
+
+    <bean id="sqlRegistry" class="com.cspark.books.toby.sqlservice.ConcurrentHashMapSqlRegistry"/>
 
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSources"/>

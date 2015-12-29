@@ -33,7 +33,7 @@ public class JaxbXmlSqlReader implements SqlReader {
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(is);
 
             for (SqlType sql : sqlmap.getSql()) {
-                sqlRegistry.registry(sql.getKey(), sql.getValue());
+                sqlRegistry.registerSql(sql.getKey(), sql.getValue());
             }
 
         } catch (JAXBException e) {

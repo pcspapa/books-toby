@@ -5,7 +5,7 @@ package com.cspark.books.toby.sqlservice;
  */
 public interface SqlRegistry {
 
-    void registry(String key, String value);
+    void registerSql(String key, String value);
 
     String findSql(String key) throws SqlNotFoundException;
 
