@@ -11,8 +11,8 @@ public class HashMapSqlRegistry implements SqlRegistry {
     private Map<String, String> sqlMap = new HashMap<>();
 
     @Override
-    public void registerSql(String key, String value) {
-        sqlMap.put(key, value);
+    public void registerSql(String key, String sql) {
+        sqlMap.put(key, sql);
      }
 
     @Override

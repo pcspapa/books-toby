@@ -1,21 +1,28 @@
 package com.cspark.books.toby.sqlservice;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by cspark on 2015. 12. 29..
  */
-public class ConcurrentHashMapSqlRegistry implements UpdatableSqlRegistry {
+public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
 
-    private Map<String, String> sqlMap = new ConcurrentHashMap<>();
+    private JdbcTemplate template;
+
+    public void setDataSource(DataSource dataSource) {
+        template = new JdbcTemplate(dataSource);
+    }
 
     @Override
     public void updateSql(String key, String sql) throws SqlUpdateFailureException {
-        if (sqlMap.get(key) == null)
+        int affected = template.update("UPDATE sqlmap SET sql_ = ? WHERE key_ = ?", sql, key);
+        if (affected == 0)
             throw new SqlUpdateFailureException(key + "에 해당하는 SQL을 찾을 수 없습니다");
-
-        sqlMap.put(key, sql);
     }
 
     @Override
@@ -27,15 +34,16 @@ public class ConcurrentHashMapSqlRegistry implements UpdatableSqlRegistry {
 
     @Override
     public void registerSql(String key, String sql) {
-        sqlMap.put(key, sql);
+        template.update("INSERT INTO sqlmap values(?, ?)", key, sql);
     }
 
     @Override
     public String findSql(String key) throws SqlNotFoundException {
-        String sql = sqlMap.get(key);
-        if (sql == null)
+        try {
+            return template.queryForObject("SELECT sql_ FROM sqlmap WHERE key_ = ?", String.class, key);
+        } catch (EmptyResultDataAccessException e) {
             throw new SqlNotFoundException(key + "을 이용해서 찾을 수 없습니다");
-        else
-            return sql;
+        }
+
     }
 }
