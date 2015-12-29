@@ -37,7 +37,17 @@
     <bean id="sqlRegistry" class="com.cspark.books.toby.sqlservice.HashMapSqlRegistry"/>
     -->
 
+    <!--
     <bean id="sqlService" class="com.cspark.books.toby.sqlservice.DefaultSqlService"/>
+    -->
+
+    <bean id="sqlService" class="com.cspark.books.toby.sqlservice.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller"/>
+    </bean>
+
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="com.cspark.books.toby.sqlservice.jaxb"/>
+    </bean>
 
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSources"/>

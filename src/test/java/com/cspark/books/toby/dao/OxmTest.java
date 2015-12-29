@@ -14,7 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
