@@ -1,5 +1,7 @@
 package com.cspark.books.toby.sqlservice;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -8,6 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.fail;
 
 /**
  * @Transactional을 위히여 Override을 이용하여 super를 호출함.
@@ -23,12 +29,12 @@ public class EmbeddedDbSqlRegistryTest extends AbstractUpdatableSqlRegistryTest 
     @Autowired
     DataSource dataSource;
 
+    @Autowired
+    UpdatableSqlRegistry updatableSqlRegistry;
+
     @Override
     protected UpdatableSqlRegistry createUpdatableSqlRegistry() {
-
-        EmbeddedDbSqlRegistry sqlRegistry = new EmbeddedDbSqlRegistry();
-        sqlRegistry.setDataSource(dataSource);
-        return sqlRegistry;
+        return updatableSqlRegistry;
     }
 
     @Override
@@ -54,5 +60,27 @@ public class EmbeddedDbSqlRegistryTest extends AbstractUpdatableSqlRegistryTest 
     @Override
     public void updateWithNotExistException() throws Exception {
         super.updateWithNotExistException();
+    }
+
+    /**
+     * Transactional이 Test와 실행 오브젝트에 같이 있을 경우 작동이 안됨.
+     * @throws Exception
+     */
+    @Test
+    @Ignore
+    public void transactionalUpdate() throws Exception {
+        super.checkFindResult("SQL1", "SQL2", "SQL3");
+
+        Map<String, String> sqlMap = new HashMap<>();
+        sqlMap.put("KEY1", "Modifier1");
+        sqlMap.put("SQL9999!@#$", "Modifier9999");
+
+        try {
+            updatableSqlRegistry.updateSql(sqlMap);
+            fail();
+        } catch (SqlUpdateFailureException e) {
+        }
+
+        super.checkFindResult("SQL1", "SQL2", "SQL3");
     }
 }

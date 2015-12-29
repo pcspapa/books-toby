@@ -2,6 +2,7 @@ package com.cspark.books.toby.sqlservice;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.HashMap;
 import java.util.Map;

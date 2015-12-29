@@ -53,6 +53,10 @@
 
     <bean id="sqlRegistry" class="com.cspark.books.toby.sqlservice.ConcurrentHashMapSqlRegistry"/>
 
+    <bean id="updatableSqlRegistry" class="com.cspark.books.toby.sqlservice.EmbeddedDbSqlRegistry">
+        <property name="dataSource" ref="dataSources"/>
+    </bean>
+
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSources"/>
         <property name="sqlService" ref="sqlService"/>
