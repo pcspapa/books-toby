@@ -8,39 +8,24 @@
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="connectionMaker" class="com.cspark.books.toby.dao.DConnectionMaker"/>
+    <context:annotation-config/>
 
-    <bean id="dataSources" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+    <!-- aop -->
+    <tx:annotation-driven/>
+
+    <!-- db -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
         <property name="url" value="jdbc:h2:tcp://localhost//projects/h2data/books/toby"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
 
-    <bean id="userService" class="com.cspark.books.toby.service.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="testUserService" class="com.cspark.books.toby.service.UserServiceTest$TestUserServiceImpl"
-          parent="userService"/>
-
-    <!--
-    <bean id="sqlService" class="com.cspark.books.toby.sqlservice.BaseSqlService">
-        <property name="sqlReader" ref="sqlReader"/>
-        <property name="sqlRegistry" ref="sqlRegistry"/>
-    </bean>
-
-    <bean id="sqlReader" class="com.cspark.books.toby.sqlservice.JaxbXmlSqlReader">
-        <property name="sqlmapFile" value="sqlmap.xml"/>
-    </bean>
-
-    <bean id="sqlRegistry" class="com.cspark.books.toby.sqlservice.HashMapSqlRegistry"/>
-    -->
-
-    <!--
-    <bean id="sqlService" class="com.cspark.books.toby.sqlservice.DefaultSqlService"/>
-    -->
-
+    <!-- sql service -->
     <bean id="sqlService" class="com.cspark.books.toby.sqlservice.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"/>
         <property name="sqlmap" value="classpath:com/cspark/books/toby/dao/sqlmap.xml"/>
@@ -54,21 +39,21 @@
     <bean id="sqlRegistry" class="com.cspark.books.toby.sqlservice.ConcurrentHashMapSqlRegistry"/>
 
     <bean id="updatableSqlRegistry" class="com.cspark.books.toby.sqlservice.EmbeddedDbSqlRegistry">
-        <property name="dataSource" ref="dataSources"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
+
+
+    <!-- application component -->
+    <bean id="userService" class="com.cspark.books.toby.service.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <bean id="testUserService" class="com.cspark.books.toby.service.UserServiceTest$TestUserServiceImpl"
+          parent="userService"/>
 
     <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
-        <property name="dataSource" ref="dataSources"/>
+        <property name="dataSource" ref="dataSource"/>
         <property name="sqlService" ref="sqlService"/>
     </bean>
-
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSources"/>
-    </bean>
-
-
-    <tx:annotation-driven/>
-
-    <context:annotation-config/>
 
 </beans>
