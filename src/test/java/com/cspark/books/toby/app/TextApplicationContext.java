@@ -57,11 +57,7 @@ public class TextApplicationContext {
 
     @Bean
     public UserDao userDao() {
-        UserDaoJdbc userDao = new UserDaoJdbc();
-        userDao.setDataSource(dataSource());
-        userDao.setSqlService(sqlService());
-
-        return userDao;
+        return new UserDaoJdbc();
     }
 
     @Bean
