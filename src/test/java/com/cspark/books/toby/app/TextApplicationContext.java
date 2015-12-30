@@ -5,16 +5,23 @@ import com.cspark.books.toby.dao.UserDaoJdbc;
 import com.cspark.books.toby.service.UserService;
 import com.cspark.books.toby.service.UserServiceImpl;
 import com.cspark.books.toby.service.UserServiceTest;
+import com.cspark.books.toby.sqlservice.EmbeddedDbSqlRegistry;
+import com.cspark.books.toby.sqlservice.OxmSqlService;
+import com.cspark.books.toby.sqlservice.SqlRegistry;
 import com.cspark.books.toby.sqlservice.SqlService;
 import org.h2.Driver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 /**
@@ -27,8 +34,8 @@ public class TextApplicationContext {
     // 1. <context:annotation-config/> 제거
     // 2. <bean>의 전환
 
-    @Autowired
-    SqlService sqlService;
+    @Resource
+    DataSource embeddedDatabase;
 
     @Bean
     public DataSource dataSource() {
@@ -53,7 +60,7 @@ public class TextApplicationContext {
     public UserDao userDao() {
         UserDaoJdbc userDao = new UserDaoJdbc();
         userDao.setDataSource(dataSource());
-        userDao.setSqlService(sqlService);  // error sqlSservice()
+        userDao.setSqlService(sqlService());
 
         return userDao;
     }
@@ -73,4 +80,30 @@ public class TextApplicationContext {
 
         return testUserService;
     }
+
+    @Bean
+    public SqlService sqlService() {
+        OxmSqlService sqlService = new OxmSqlService();
+        sqlService.setUnmarshaller(unmarshaller());
+        sqlService.setSqlRegistry(sqlRegistry());
+
+        return sqlService;
+    }
+
+    @Bean
+    public Unmarshaller unmarshaller() {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setContextPath("com.cspark.books.toby.sqlservice.jaxb");
+
+        return marshaller;
+    }
+
+    @Bean
+    public SqlRegistry sqlRegistry() {
+        EmbeddedDbSqlRegistry sqlRegistry = new EmbeddedDbSqlRegistry();
+        sqlRegistry.setDataSource(embeddedDatabase);
+
+        return sqlRegistry;
+    }
+
 }

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertThat;
  * Created by cspark on 2015. 12. 29..
  */
 public abstract class AbstractUpdatableSqlRegistryTest {
+
     UpdatableSqlRegistry sqlRegistry;
 
     @Before
@@ -29,7 +30,6 @@ public abstract class AbstractUpdatableSqlRegistryTest {
     @Test
     public void find() throws Exception {
         checkFindResult("SQL1", "SQL2", "SQL3");
-
     }
 
     protected void checkFindResult(String expected1, String expected2, String expected3) {

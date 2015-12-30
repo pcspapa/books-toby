@@ -86,7 +86,6 @@ public class UserServiceTest {
         userService.add(users.get(0));
 
         assertThat(users.get(0).getLevel(), is(Level.BASIC));
-
     }
 
     @Test
