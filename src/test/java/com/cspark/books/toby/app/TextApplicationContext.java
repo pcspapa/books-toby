@@ -12,7 +12,6 @@ import com.cspark.books.toby.sqlservice.SqlService;
 import org.h2.Driver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -20,22 +19,22 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 /**
  * Created by cspark on 2015. 12. 30..
  */
 @Configuration
-@ImportResource("/test-sqlmap-applicationContext.xml")
+@EnableTransactionManagement
 public class TextApplicationContext {
 
     // 1. <context:annotation-config/> 제거
     // 2. <bean>의 전환
-
-    @Resource
-    DataSource embeddedDatabase;
+    // 3. 전용 태그 전환
+    //    - <jdbc:embedded-datasource>
+    //    - <tx:annotation-driven />
 
     @Bean
     public DataSource dataSource() {
@@ -101,9 +100,17 @@ public class TextApplicationContext {
     @Bean
     public SqlRegistry sqlRegistry() {
         EmbeddedDbSqlRegistry sqlRegistry = new EmbeddedDbSqlRegistry();
-        sqlRegistry.setDataSource(embeddedDatabase);
+        sqlRegistry.setDataSource(embeddedDatabase());
 
         return sqlRegistry;
+    }
+
+    @Bean
+    public DataSource embeddedDatabase() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:/com/cspark/books/toby/learningtest/embeddeddb/schma.sql")
+                .build();
     }
 
 }
