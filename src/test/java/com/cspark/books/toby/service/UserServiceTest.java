@@ -1,7 +1,6 @@
 package com.cspark.books.toby.service;
 
 import com.cspark.books.toby.app.AppContext;
-import com.cspark.books.toby.app.TestAppContext;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -50,6 +50,9 @@ public class UserServiceTest {
 
     @Autowired
     ApplicationContext context;
+
+    @Autowired
+    DefaultListableBeanFactory bf;
 
     private List<User> users;
 
@@ -221,6 +224,14 @@ public class UserServiceTest {
     @Test
     public void readOnlyTransactionAttribute() throws Exception {
         testUserService.getAll();
+    }
+
+    @Test
+    public void beans() throws Exception {
+        System.out.println("\n");
+        for (String name : bf.getBeanDefinitionNames()) {
+            System.out.println(name + "\t " +  bf.getBean(name).getClass().getName());
+        }
     }
 
     private void checkLevel(User user, boolean upgraded) {

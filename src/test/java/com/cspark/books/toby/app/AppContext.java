@@ -1,10 +1,10 @@
 package com.cspark.books.toby.app;
 
+import com.cspark.books.toby.service.DummyMailSender;
+import com.cspark.books.toby.service.UserService;
+import com.cspark.books.toby.service.UserServiceTest;
 import org.h2.Driver;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.cspark.books.toby")
-@Import({SqlServiceContext.class, TestAppContext.class, ProductAppContext.class})
+@Import({SqlServiceContext.class})
 public class AppContext {
 
     @Bean
@@ -42,4 +42,38 @@ public class AppContext {
         return transactionManager;
     }
 
+    /**
+     * Created by cspark on 2015. 12. 30..
+     */
+    @Configuration
+    @Profile("product")
+    public static class ProductAppContext {
+
+        @Bean
+        public MailSender mailSender() {
+            JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+            mailSender.setHost("localhost");
+            return mailSender;
+        }
+
+    }
+
+    /**
+     * Created by cspark on 2015. 12. 30..
+     */
+    @Configuration
+    @Profile("test")
+    public static class TestAppContext {
+
+        @Bean
+        public UserService testUserService() {
+            return new UserServiceTest.TestUserService();
+        }
+
+        @Bean
+        public MailSender mailSender() {
+            return new DummyMailSender();
+        }
+
+    }
 }
