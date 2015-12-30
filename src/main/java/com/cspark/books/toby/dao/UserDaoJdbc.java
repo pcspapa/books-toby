@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -18,6 +20,7 @@ import java.util.List;
 /**
  * Created by cspark on 2015. 11. 25..
  */
+@Repository
 public class UserDaoJdbc implements UserDao {
 
     private JdbcTemplate jdbcTemplate;

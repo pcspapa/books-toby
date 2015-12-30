@@ -10,7 +10,9 @@ import com.cspark.books.toby.sqlservice.OxmSqlService;
 import com.cspark.books.toby.sqlservice.SqlRegistry;
 import com.cspark.books.toby.sqlservice.SqlService;
 import org.h2.Driver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -28,13 +30,11 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableTransactionManagement
+@ComponentScan(basePackages = "com.cspark.books.toby")
 public class TextApplicationContext {
 
-    // 1. <context:annotation-config/> 제거
-    // 2. <bean>의 전환
-    // 3. 전용 태그 전환
-    //    - <jdbc:embedded-datasource>
-    //    - <tx:annotation-driven />
+    @Autowired
+    UserDao userDao;
 
     @Bean
     public DataSource dataSource() {
@@ -56,22 +56,9 @@ public class TextApplicationContext {
     }
 
     @Bean
-    public UserDao userDao() {
-        return new UserDaoJdbc();
-    }
-
-    @Bean
-    public UserService userService() {
-        UserServiceImpl userService = new UserServiceImpl();
-        userService.setUserDao(userDao());
-
-        return userService;
-    }
-
-    @Bean
     public UserService testUserService() {
         UserServiceTest.TestUserService testUserService = new UserServiceTest.TestUserService();
-        testUserService.setUserDao(userDao());
+        testUserService.setUserDao(userDao);
 
         return testUserService;
     }

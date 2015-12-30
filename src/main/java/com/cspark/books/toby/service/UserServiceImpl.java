@@ -3,16 +3,20 @@ package com.cspark.books.toby.service;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by cspark on 2015. 12. 16..
  */
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     UserDao userDao;
-
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
