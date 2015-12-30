@@ -1,12 +1,12 @@
 package com.cspark.books.toby.service;
 
+import com.cspark.books.toby.app.TextApplicationContext;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 import org.junit.runner.RunWith;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import static org.junit.Assert.fail;
  * Created by cspark on 2015. 12. 16..
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/sqlmap-applicationContext.xml")
+@ContextConfiguration(classes = TextApplicationContext.class)
 public class UserServiceTest {
 
     @Autowired
@@ -91,12 +91,12 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
-        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
-        testUserServiceImpl.setUserDao(userDao);
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
 
         UserServiceTx txUserService = new UserServiceTx();
         txUserService.setTransactionManager(transactionManager);
-        txUserService.setUserService(testUserServiceImpl);
+        txUserService.setUserService(testUserService);
 
         userDao.deleteAll();
 
@@ -115,11 +115,11 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothingWithDynamicProxy() throws Exception {
-        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
-        testUserServiceImpl.setUserDao(userDao);
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
 
         TransactionHandler txHandler = new TransactionHandler();
-        txHandler.setTarget(testUserServiceImpl);
+        txHandler.setTarget(testUserService);
         txHandler.setTransactionManager(transactionManager);
         txHandler.setPattern("upgradeLevels");
 
@@ -146,11 +146,11 @@ public class UserServiceTest {
     @DirtiesContext
     @Ignore
     public void upgradeAllOrNothingWithFactoryBean() throws Exception {
-        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
-        testUserServiceImpl.setUserDao(userDao);
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
 
         TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserServiceImpl);
+        txProxyFactoryBean.setTarget(testUserService);
 
         UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
@@ -172,11 +172,11 @@ public class UserServiceTest {
     @DirtiesContext
     @Ignore
     public void upgradeAllOrNothingWithProxyFactoryBean() throws Exception {
-        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
-        testUserServiceImpl.setUserDao(userDao);
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
 
         ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserServiceImpl);
+        txProxyFactoryBean.setTarget(testUserService);
 
         UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
@@ -231,14 +231,14 @@ public class UserServiceTest {
         }
     }
 
-    static class TestUserServiceImpl extends UserServiceImpl {
+    public static class TestUserService extends UserServiceImpl {
         private String id;
 
-        public TestUserServiceImpl() {
+        public TestUserService() {
             this.id = "id4";
         }
 
-        private TestUserServiceImpl(String id) {
+        private TestUserService(String id) {
             this.id = id;
         }
 

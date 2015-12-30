@@ -2,28 +2,11 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
-    <context:annotation-config/>
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- aop -->
-    <tx:annotation-driven/>
 
     <!-- db -->
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-        <property name="driverClass" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:tcp://localhost//projects/h2data/books/toby"/>
-        <property name="username" value="sa"/>
-        <property name="password" value=""/>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
 
     <!-- sql service -->
     <bean id="sqlService" class="com.cspark.books.toby.sqlservice.OxmSqlService">
@@ -44,16 +27,5 @@
 
 
     <!-- application component -->
-    <bean id="userService" class="com.cspark.books.toby.service.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
-    </bean>
-
-    <bean id="testUserService" class="com.cspark.books.toby.service.UserServiceTest$TestUserServiceImpl"
-          parent="userService"/>
-
-    <bean id="userDao" class="com.cspark.books.toby.dao.UserDaoJdbc">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="sqlService" ref="sqlService"/>
-    </bean>
 
 </beans>

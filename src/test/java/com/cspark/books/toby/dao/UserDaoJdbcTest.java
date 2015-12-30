@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
  * Created by cspark on 2015. 11. 30..
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/applicationContext.xml")
+@ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserDaoJdbcTest {
 
     @Autowired

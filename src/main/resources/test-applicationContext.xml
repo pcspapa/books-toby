@@ -48,7 +48,7 @@
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="testUserService" class="com.cspark.books.toby.service.UserServiceTest$TestUserServiceImpl" parent="userService"/>
+    <bean id="testUserService" class="com.cspark.books.toby.service.UserServiceTest$TestUserService" parent="userService"/>
 
 
 
