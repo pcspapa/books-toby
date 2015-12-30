@@ -67,7 +67,6 @@ public class EmbeddedDbSqlRegistryTest extends AbstractUpdatableSqlRegistryTest 
      * @throws Exception
      */
     @Test
-    @Ignore
     public void transactionalUpdate() throws Exception {
         super.checkFindResult("SQL1", "SQL2", "SQL3");
 
