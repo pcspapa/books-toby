@@ -1,6 +1,7 @@
 package com.cspark.books.toby.service;
 
-import com.cspark.books.toby.app.TextApplicationContext;
+import com.cspark.books.toby.app.AppContext;
+import com.cspark.books.toby.app.TestAppContext;
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.domain.Level;
 import com.cspark.books.toby.domain.User;
@@ -30,7 +31,7 @@ import static org.junit.Assert.fail;
  * Created by cspark on 2015. 12. 16..
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TextApplicationContext.class)
+@ContextConfiguration(classes = {TestAppContext.class, AppContext.class})
 public class UserServiceTest {
 
     @Autowired

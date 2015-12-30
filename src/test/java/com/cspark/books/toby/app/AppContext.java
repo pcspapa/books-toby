@@ -1,16 +1,10 @@
 package com.cspark.books.toby.app;
 
-import com.cspark.books.toby.dao.UserDao;
-import com.cspark.books.toby.dao.UserDaoJdbc;
-import com.cspark.books.toby.service.UserService;
-import com.cspark.books.toby.service.UserServiceImpl;
-import com.cspark.books.toby.service.UserServiceTest;
 import com.cspark.books.toby.sqlservice.EmbeddedDbSqlRegistry;
 import com.cspark.books.toby.sqlservice.OxmSqlService;
 import com.cspark.books.toby.sqlservice.SqlRegistry;
 import com.cspark.books.toby.sqlservice.SqlService;
 import org.h2.Driver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,10 +25,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.cspark.books.toby")
-public class TextApplicationContext {
-
-    @Autowired
-    UserDao userDao;
+public class AppContext {
 
     @Bean
     public DataSource dataSource() {
@@ -53,14 +44,6 @@ public class TextApplicationContext {
         transactionManager.setDataSource(dataSource());
 
         return transactionManager;
-    }
-
-    @Bean
-    public UserService testUserService() {
-        UserServiceTest.TestUserService testUserService = new UserServiceTest.TestUserService();
-        testUserService.setUserDao(userDao);
-
-        return testUserService;
     }
 
     @Bean
