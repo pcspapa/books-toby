@@ -1,4 +1,4 @@
-package com.cspark.books.toby.app;
+package com.cspark.books.toby.sqlservice;
 
 import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.sqlservice.*;

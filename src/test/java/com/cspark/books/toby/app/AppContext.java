@@ -4,7 +4,9 @@ import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.service.DummyMailSender;
 import com.cspark.books.toby.service.UserService;
 import com.cspark.books.toby.service.UserServiceTest;
+import com.cspark.books.toby.sqlservice.EnableSqlService;
 import com.cspark.books.toby.sqlservice.SqlMapConfig;
+import com.cspark.books.toby.sqlservice.SqlServiceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -28,7 +30,7 @@ import java.sql.Driver;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.cspark.books.toby")
-@Import({SqlServiceContext.class})
+@EnableSqlService
 @PropertySource("/database.properties")
 public class AppContext implements SqlMapConfig {
 
