@@ -4,7 +4,9 @@ import com.cspark.books.toby.service.DummyMailSender;
 import com.cspark.books.toby.service.UserService;
 import com.cspark.books.toby.service.UserServiceTest;
 import org.h2.Driver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
@@ -21,15 +23,23 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.cspark.books.toby")
 @Import({SqlServiceContext.class})
+@PropertySource("/database.properties")
 public class AppContext {
+
+    @Autowired
+    Environment env;
 
     @Bean
     public DataSource dataSource() {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriverClass(Driver.class);
-        dataSource.setUrl("jdbc:h2:tcp://localhost//projects/h2data/books/toby");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
+        try {
+            dataSource.setDriverClass((Class<? extends java.sql.Driver>) Class.forName(env.getProperty("db.driverClass")));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        dataSource.setUrl(env.getProperty("db.url"));
+        dataSource.setUsername(env.getProperty("db.username"));
+        dataSource.setPassword(env.getProperty("db.password"));
 
         return dataSource;
     }
