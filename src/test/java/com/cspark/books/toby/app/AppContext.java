@@ -3,6 +3,7 @@ package com.cspark.books.toby.app;
 import com.cspark.books.toby.service.DummyMailSender;
 import com.cspark.books.toby.service.UserService;
 import com.cspark.books.toby.service.UserServiceTest;
+import com.cspark.books.toby.sqlservice.SqlMapConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -65,6 +66,11 @@ public class AppContext {
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfiguer() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean
+    public SqlMapConfig sqlMapConfig() {
+        return new UserSqlMapConfig();
     }
 
     /**

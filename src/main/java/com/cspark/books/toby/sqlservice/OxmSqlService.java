@@ -1,6 +1,5 @@
 package com.cspark.books.toby.sqlservice;
 
-import com.cspark.books.toby.dao.UserDao;
 import com.cspark.books.toby.sqlservice.jaxb.SqlType;
 import com.cspark.books.toby.sqlservice.jaxb.Sqlmap;
 import org.springframework.core.io.ClassPathResource;
@@ -50,7 +49,7 @@ public class OxmSqlService implements SqlService {
 
     private class OxmSqlReader implements SqlReader {
 
-        private Resource sqlmap = new ClassPathResource("sqlmap.xml", UserDao.class);
+        private Resource sqlmap = new ClassPathResource("sqlmap.xml");
 
         private Unmarshaller unmarshaller;
 
