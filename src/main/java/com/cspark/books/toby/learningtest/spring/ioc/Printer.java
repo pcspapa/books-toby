@@ -1,4 +1,4 @@
-package com.cspark.books.toby.learningtest.ioc;
+package com.cspark.books.toby.learningtest.spring.ioc;
 
 /**
  * Created by cspark on 2016. 1. 4..
@@ -6,5 +6,5 @@ package com.cspark.books.toby.learningtest.ioc;
 public interface Printer {
 
     void print(String message);
-    
+
 }

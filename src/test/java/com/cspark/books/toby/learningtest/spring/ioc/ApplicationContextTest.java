@@ -1,4 +1,4 @@
-package com.cspark.books.toby.learningtest.ioc;
+package com.cspark.books.toby.learningtest.spring.ioc;
 
 import org.junit.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
