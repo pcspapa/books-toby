@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -70,4 +71,15 @@ public class ApplicationContextTest {
 
         assertThat(ac.getBean("printer").toString(), is("Hello Spring"));
     }
+
+    @Test
+    public void genericXmlApplicationContext() throws Exception {
+        GenericXmlApplicationContext ac = new GenericXmlApplicationContext("com/cspark/books/toby/learningtest/spring/ioc/genericApplicationContext.xml");
+
+        Hello hello = ac.getBean("hello", Hello.class);
+        hello.print();
+
+        assertThat(ac.getBean("printer").toString(), is("Hello Spring"));
+    }
+
 }
